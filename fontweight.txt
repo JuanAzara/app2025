@@ -1,0 +1,9 @@
+FontWeight.w100	FontWeight.thin	
+FontWeight.w200	FontWeight.extraLight	
+FontWeight.w300	FontWeight.light	
+FontWeight.w400	FontWeight.normal	
+FontWeight.w500	FontWeight.medium	
+FontWeight.w600	FontWeight.semiBold	
+FontWeight.w700	FontWeight.bold	Negrita
+FontWeight.w800	FontWeight.extraBold	
+FontWeight.w900	FontWeight.black	
