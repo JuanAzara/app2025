@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "796725408665",
+    "project_id": "vecinosreina",
+    "storage_bucket": "vecinosreina.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796725408665:android:9dc881f5d65086d579d908",
+        "android_client_info": {
+          "package_name": "com.example.vecinosreina"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796725408665-uec9lr0bpqm4je59c2fq5n28qblcraqv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vecinosreina",
+            "certificate_hash": "bf7360f9e6cb769331fc0166d3bfda49d12e3718"
+          }
+        },
+        {
+          "client_id": "796725408665-8k8bkp7b0ranhoeuhcmr2h4urifg98p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSx4d32R7zGrZNXjC589AQDNFtK9Gmq9M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796725408665-8k8bkp7b0ranhoeuhcmr2h4urifg98p7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
