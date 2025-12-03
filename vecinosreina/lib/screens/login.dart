@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'package:vecinosreina/main.dart'; // Para HomeScreen
+//import 'package:vecinosreina/main.dart';
+import 'package:vecinosreina/screens/actividad.dart'; // Para HomeScreen
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null && mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const ActividadScreen()),
       );
     }
   }

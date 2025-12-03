@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vecinosreina/main.dart';     // HomScreen
-import 'package:vecinosreina/screens/actividad.dart';
+import 'package:vecinosreina/screens/crearActividad.dart';
+//import 'package:vecinosreina/screens/actividad.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
           // No autenticado → a Login
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const ActividadScreen()),
+            MaterialPageRoute(builder: (_) => const crearActividadScreen()),
           );
         }
       });

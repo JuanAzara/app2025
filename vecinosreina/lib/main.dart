@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'package:vecinosreina/screens/splashscreen.dart';
 import 'package:vecinosreina/screens/actividad.dart';
+import 'package:vecinosreina/screens/inicio.dart';
+import 'package:vecinosreina/screens/splashscreen.dart';
 import 'package:vecinosreina/theme/theme.dart';
 
 Future<void> main() async {
@@ -47,6 +47,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ActividadScreen();
+    return const InicioScreen();
   }
 }

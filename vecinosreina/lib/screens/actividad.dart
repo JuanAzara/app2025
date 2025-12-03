@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vecinosreina/screens/crearActividad.dart';
 import 'package:vecinosreina/screens/formulario.dart';
 
 class ActividadScreen extends StatefulWidget {
@@ -10,13 +11,16 @@ class ActividadScreen extends StatefulWidget {
 }
 
 class _ActividadScreenState extends State<ActividadScreen> {
-  
+  final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 1;
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const crearActividadScreen()),
+      );
+    }
   }
 
   @override
@@ -40,7 +44,7 @@ class _ActividadScreenState extends State<ActividadScreen> {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +62,6 @@ class _ActividadScreenState extends State<ActividadScreen> {
 
               const SizedBox(height: 12),
 
-        
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -137,27 +140,25 @@ class _ActividadScreenState extends State<ActividadScreen> {
               const Divider(),
               const SizedBox(height: 5),
 
-
               SizedBox(
-  width: double.infinity,
-  child: ElevatedButton(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: cs.primary,
-      foregroundColor: cs.onPrimary,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-    ),
-    onPressed: () {
-      Navigator.pushReplacement(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: cs.primary,
+                    foregroundColor: cs.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  onPressed: () {Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const TallerPinturaScreen()),
-      );
-    },
-    child: const Text('INSCRIBETE'),
-  ),
-),
+      );},
+                  child: const Text('INSCRIBETE'),
+                  
+                ),
+              ),
 
               const SizedBox(height: 16),
               const Divider(),
@@ -204,7 +205,6 @@ class _ActividadScreenState extends State<ActividadScreen> {
   }
 }
 
-
 class CommentInputField extends StatefulWidget {
   const CommentInputField({super.key, required this.tallerId});
   final String tallerId;
@@ -218,7 +218,7 @@ class _CommentInputFieldState extends State<CommentInputField> {
   bool _sending = false;
 
   Future<void> _send() async {
-    final scaffoldContext = context; 
+    final scaffoldContext = context;
     final text = _controller.text.trim();
     if (text.isEmpty || _sending) return;
 
@@ -245,28 +245,29 @@ class _CommentInputFieldState extends State<CommentInputField> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          child: TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              hintText: 'Escribe un comentario',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 10,
-              ),
+        TextField(
+          controller: _controller,
+          maxLines: 3, 
+          decoration: InputDecoration(
+            hintText: 'Escribe un comentario',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 20,
             ),
           ),
         ),
-        const SizedBox(width: 8),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: cs.primary,
-            foregroundColor: cs.onPrimary,
+        const SizedBox(height: 8),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: cs.primary),
+            foregroundColor: cs.primary,
+            padding: const EdgeInsets.symmetric(vertical: 13),
           ),
           onPressed: _sending ? null : _send,
           child: _sending
@@ -275,13 +276,12 @@ class _CommentInputFieldState extends State<CommentInputField> {
                   width: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Publicar'),
+              : const Text('Comentar'),
         ),
       ],
     );
   }
 }
-
 
 class CommentsList extends StatefulWidget {
   const CommentsList({super.key, required this.tallerId});
@@ -292,7 +292,6 @@ class CommentsList extends StatefulWidget {
 }
 
 class _CommentsListState extends State<CommentsList> {
-
   Future<void> _editComment(
       BuildContext dialogContext, String docId, String currentText) async {
     final scaffoldContext = context;
@@ -302,6 +301,7 @@ class _CommentsListState extends State<CommentsList> {
       context: dialogContext,
       builder: (context) {
         final tt = Theme.of(context).textTheme;
+        final cs = Theme.of(context).colorScheme;
 
         return AlertDialog(
           title: Text('Editar comentario', style: tt.titleMedium),
@@ -318,6 +318,10 @@ class _CommentsListState extends State<CommentsList> {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cs.primary,
+                foregroundColor: cs.onPrimary,
+              ),
               onPressed: () async {
                 final newText = controller.text.trim();
 
@@ -350,16 +354,22 @@ class _CommentsListState extends State<CommentsList> {
       context: dialogContext,
       builder: (context) {
         final tt = Theme.of(context).textTheme;
+        final cs = Theme.of(context).colorScheme;
 
         return AlertDialog(
           title: Text('Eliminar comentario', style: tt.titleMedium),
-          content: const Text('¿Estás seguro que quieres eliminar tu comentario?'),
+          content:
+              const Text('¿Estás seguro que quieres eliminar tu comentario?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cs.error,
+                foregroundColor: cs.onError,
+              ),
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Eliminar'),
             ),
@@ -394,11 +404,15 @@ class _CommentsListState extends State<CommentsList> {
         }
 
         final docs = snapshot.data!.docs;
+        if (docs.isEmpty) {
+          return const Text('Sé el primero en comentar.');
+        }
+
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: docs.length,
-          separatorBuilder: (_, __) => const Divider(height: 12),
+          separatorBuilder: (_, _) => const Divider(height: 12),
           itemBuilder: (context, index) {
             final doc = docs[index];
             final data = doc.data() as Map<String, dynamic>;
@@ -418,9 +432,10 @@ class _CommentsListState extends State<CommentsList> {
                       '${dt.minute.toString().padLeft(2, '0')}',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     )
-                  : const Text('Enviando…', style: TextStyle(fontSize: 12)),
-
-          
+                  : const Text(
+                      'Enviando…',
+                      style: TextStyle(fontSize: 12),
+                    ),
               trailing: PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert),
                 onSelected: (value) {
