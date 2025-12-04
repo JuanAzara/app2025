@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:vecinosreina/main.dart';     // HomScreen
+import 'package:vecinosreina/main.dart';     
 import 'package:vecinosreina/screens/crearActividad.dart';
 //import 'package:vecinosreina/screens/actividad.dart';
 
@@ -26,13 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
         final user = FirebaseAuth.instance.currentUser;
 
         if (user != null) {
-          // Usuario autenticado → a Home
+          
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const HomeScreen()),
           );
         } else {
-          // No autenticado → a Login
+         
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const crearActividadScreen()),

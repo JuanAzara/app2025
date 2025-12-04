@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-// Importa la pantalla a la que navegas desde la tarjeta de taller (ChatsScreen o ActividadScreen)
-import 'package:vecinosreina/screens/actividad.dart'; 
-// Asumo que ChatsScreen está renombrado o es equivalente a ActividadScreen
+import 'package:vecinosreina/screens/actividad.dart';
+import 'package:vecinosreina/screens/crearActividad.dart'; 
 
 class InicioScreen extends StatefulWidget {
   const InicioScreen({super.key});
@@ -14,61 +13,60 @@ class _InicioScreenState extends State<InicioScreen> {
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+     if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const InicioScreen()),
+      );
+    }
+    if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const ActividadScreen()),
+      );
+    }
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const crearActividadScreen()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Obtenemos el esquema de color (ColorScheme) y el color secundario
     final cs = Theme.of(context).colorScheme;
-    final Color secondaryColor = cs.secondary;
+    final Color secondaryColor = cs.primary;
 
     return Scaffold(
-      // CORRECCIÓN: Quitamos el color de fondo fijo. El tema lo maneja.
-      // backgroundColor: Colors.white, 
-      appBar: _InicioAppBar(cs: cs), // Pasamos el ColorScheme
+      appBar: _InicioAppBar(cs: cs), 
       body: const _InicioBody(),
       bottomNavigationBar: _InicioBottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        secondaryColor: secondaryColor, // Usado para el color de fondo de la barra
+        secondaryColor: secondaryColor, 
       ),
     );
   }
 }
 
-// -----------------------------------------------------------------------------
-// --- 1. Componentes de UI Modulares ---
-// -----------------------------------------------------------------------------
-
 class _InicioAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ColorScheme cs;
   
-  // CORRECCIÓN: El constructor ya no es 'const' y requiere cs
   const _InicioAppBar({required this.cs}); 
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      // CORRECCIÓN: Quitamos el color de fondo fijo. El tema lo maneja.
-      // backgroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        // CORRECCIÓN: Usamos el color de contraste del tema (onBackground o onSurface)
-        icon: Icon(Icons.arrow_back, color: cs.onBackground),
-        onPressed: () {},
-      ),
+      backgroundColor: cs.primary,
       title: Text(
         'La Reina',
-        // CORRECCIÓN: Usamos el color de contraste del tema
-        style: TextStyle(color: cs.onBackground),
+        style: TextStyle(color: Colors.white),
       ),
       actions: [
         IconButton(
-          // CORRECCIÓN: Usamos el color de contraste del tema
-          icon: Icon(Icons.more_vert, color: cs.onBackground),
+          icon: Icon(Icons.more_vert, color: Colors.white),
           onPressed: () {},
         ),
       ],
@@ -84,7 +82,6 @@ class _InicioBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtenemos el TextTheme
     final tt = Theme.of(context).textTheme;
     
     return SingleChildScrollView(
@@ -95,19 +92,16 @@ class _InicioBody extends StatelessWidget {
             imagePath: 'assets/talleres-infantiles.png',
           ),
 
-          // Título principal "Talleres"
           Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 8.0),
             child: Text(
               'Talleres',
               style: tt.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                // CORRECCIÓN: Eliminamos el color fijo (Colors.black). Usamos el TextTheme.
               ),
             ),
           ),
 
-          // Tarjeta de Pintura: NAVEGA A la siguiente pantalla (ChatsScreen/ActividadScreen)
           _WorkshopCard(
             title: 'Pintura',
             schedule: 'Martes/12:30-14:30',
@@ -115,12 +109,11 @@ class _InicioBody extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ActividadScreen()), // Usando ActividadScreen
+                MaterialPageRoute(builder: (context) => const ActividadScreen()), 
               );
             },
           ),
 
-          // Tarjeta de Baile
           const _WorkshopCard(
             title: 'Baile',
             schedule: 'Jueves/17:30-19:30',
@@ -135,10 +128,6 @@ class _InicioBody extends StatelessWidget {
   }
 }
 
-// -----------------------------------------------------------------------------
-// --- 2. Componentes Visuales Reutilizables ---
-// -----------------------------------------------------------------------------
-
 class _MainBanner extends StatelessWidget {
   final String imagePath;
   
@@ -149,8 +138,7 @@ class _MainBanner extends StatelessWidget {
     return Container(
       height: 280, 
       width: double.infinity,
-      // CORRECCIÓN: Quitamos color fijo
-      // color: Colors.white, 
+
       child: Image.asset(
         imagePath,
         fit: BoxFit.contain, 
@@ -188,14 +176,12 @@ class _WorkshopCard extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    // Obtenemos el color secundario del tema para el enlace "Ver más"
     final Color linkColor = cs.secondary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
-        // CORRECCIÓN: Quitamos color fijo
-        // color: Colors.white, 
+
         elevation: 0, 
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
@@ -216,7 +202,6 @@ class _WorkshopCard extends StatelessWidget {
                       Text(
                         title,
                         style: tt.titleLarge?.copyWith(
-                          // CORRECCIÓN: Eliminamos color fijo (Colors.black)
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -233,8 +218,9 @@ class _WorkshopCard extends StatelessWidget {
                         child: Text(
                           'Ver más',
                           style: TextStyle(
-                            color: linkColor, // Usa el color del tema
+                            color: linkColor, 
                             fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
                           ),
                         ),
                       ),
@@ -243,7 +229,6 @@ class _WorkshopCard extends StatelessWidget {
                 ),
               ),
 
-              // Imagen a la derecha
               ClipRRect(
                 borderRadius: BorderRadius.circular(4.0),
                 child: Container(
@@ -275,7 +260,6 @@ class _WorkshopCard extends StatelessWidget {
   }
 }
 
-// --- 3. BottomNavigationBar Componente ---
 class _InicioBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -293,24 +277,23 @@ class _InicioBottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: secondaryColor, // Usa el color del tema
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white70,
+      backgroundColor: secondaryColor, 
+      selectedItemColor: Colors.grey,
+      unselectedItemColor: Colors.white,
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Buscar',
+          icon: Icon(Icons.home, color: Colors.white,),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today_outlined),
+          icon: Icon(Icons.calendar_today_outlined,color: Colors.white,),
           label: 'Calendario',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Perfil',
+          icon: Icon(Icons.add,color: Colors.white,),
+          label: 'Crear actividades',
         ),
       ],
     );

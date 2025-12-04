@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vecinosreina/screens/actividad.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vecinosreina/screens/crearActividad.dart';
+import 'package:vecinosreina/screens/inicio.dart';
 
 class TallerPinturaScreen extends StatefulWidget {
   const TallerPinturaScreen({Key? key}) : super(key: key);
@@ -14,17 +16,22 @@ int _currentIndex = 1;
 
 
   void _onTabTapped(int index) {
-    if (index == 2) {
+     if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const InicioScreen()),
+      );
+    }
+    if (index == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const ActividadScreen()),
       );
-    } else if (index == 1) {
-      setState(() => _currentIndex = index);
-    } else {
+    }
+    if (index == 2) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const PlaceholderScreen()),
+        MaterialPageRoute(builder: (_) => const crearActividadScreen()),
       );
     }
   }
@@ -51,7 +58,6 @@ int _currentIndex = 1;
         numeroVecinal: _numeroVecinalController.text.trim(),
         tipoPublico: _tipoPublico!,
         onConfirmPago: () async {
-  // Guardar en Firestore
   await FirebaseFirestore.instance.collection('inscripciones').add({
     'nombre': _nombreController.text.trim(),
     'rut': _rutController.text.trim(),
@@ -61,12 +67,11 @@ int _currentIndex = 1;
     'fecha': '28 de Mayo - 18:30 PM',
     'monto': 7000,
     'metodoPago': 'Crédito',
-    'lugar': 'Centro Cultural Vicente Bianchi',
+    'lugar': 'Centro Cultural Vicente Bianchi - Santa Rita 1153',
     'timestamp': FieldValue.serverTimestamp(),
   });
 
-  // Luego navega a la pantalla final
-  Navigator.of(context).pop(); // cerrar diálogo
+  Navigator.of(context).pop(); 
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -102,8 +107,8 @@ int _currentIndex = 1;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Proceso de compra'),
-        backgroundColor: const Color(0xFF197C89),
+        title: const Text('Proceso de compra', style: TextStyle(color:Colors.white)),
+        backgroundColor: cs.primary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -159,7 +164,6 @@ int _currentIndex = 1;
               ),
               const SizedBox(height: 40),
 
-              // Botón Confirmar
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -181,20 +185,21 @@ int _currentIndex = 1;
        bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        selectedItemColor: cs.primary,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.white,
+        backgroundColor: cs.primary,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Buscar',
+            icon: Icon(Icons.home, color:Colors.white),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.calendar_today, color:Colors.white),
             label: 'Calendario',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
+            icon: Icon(Icons.add, color:Colors.white),
+            label: 'Crear actividades',
           ),
         ],
       ),
@@ -202,7 +207,6 @@ int _currentIndex = 1;
   }
 }
 
-/// DIALOGO DE CONFIRMACIÓN DE PAGO
 class _DialogPagoActividad extends StatelessWidget {
   final String nombre;
   final String rut;
@@ -230,7 +234,7 @@ class _DialogPagoActividad extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Taller de pintura:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,)),
               const SizedBox(height: 8),
               const Text('Resumen:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
@@ -286,7 +290,6 @@ class _DialogPagoActividad extends StatelessWidget {
   }
 }
 
-/// PANTALLA FINAL DE INSCRIPCIÓN CONFIRMADA
 class ConfirmacionInscripcionScreen extends StatelessWidget {
   const ConfirmacionInscripcionScreen({Key? key}) : super(key: key);
 

@@ -1,7 +1,9 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vecinosreina/screens/crearActividad.dart';
 import 'package:vecinosreina/screens/formulario.dart';
+import 'package:vecinosreina/screens/inicio.dart';
 
 class ActividadScreen extends StatefulWidget {
   const ActividadScreen({super.key});
@@ -14,7 +16,42 @@ class _ActividadScreenState extends State<ActividadScreen> {
   final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 1;
 
-  void _onTabTapped(int index) {
+GoogleMapController? _mapController;
+  final LatLng _ubicacionTaller = const LatLng(-33.443840, -70.559145); 
+  Set<Marker> _markers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _crearMarcador();
+  }
+
+  void _crearMarcador() {
+    _markers = {
+      Marker(
+        markerId: const MarkerId('taller_pintura'),
+        position: _ubicacionTaller,
+        infoWindow: const InfoWindow(
+          title: 'Taller de Pintura',
+          snippet: 'Santa Rita 1153, La Reina',
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      ),
+    };
+  }
+   void _onTabTapped(int index) {
+     if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const InicioScreen()),
+      );
+    }
+    if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const ActividadScreen()),
+      );
+    }
     if (index == 2) {
       Navigator.pushReplacement(
         context,
@@ -32,7 +69,7 @@ class _ActividadScreenState extends State<ActividadScreen> {
       appBar: AppBar(
         backgroundColor: cs.primary,
         title: Text(
-          'Vecinos Reina',
+          'Taller de pintura',
           style: tt.titleLarge?.copyWith(color: cs.onPrimary),
         ),
         actions: const [
@@ -95,11 +132,41 @@ class _ActividadScreenState extends State<ActividadScreen> {
               Text('Descripción', style: tt.titleSmall),
 
               Text(
-                'Descubre los fundamentos de la pintura en este entretenido taller donde podrás dar rienda suelta a tu creatividad y crear piezas únicas.',
+                'Descubre los fundamentos de la pintura en este entretenido taller donde podrás dar rienda suelta a tu creatividad y crear piezas únicas. Se enseñarán técnicas como acuarela, tempera, acrílico y óleo. Los materiales estarán disponibles al igual que lienzos y pinceles.',
                 style: tt.bodySmall?.copyWith(
                   color: tt.bodySmall?.color?.withOpacity(0.7),
                 ),
               ),
+
+              const SizedBox(height: 5),
+
+              Text(
+                'Cupos disponibles: 50',
+                style: tt.bodySmall?.copyWith(
+                  color: tt.bodySmall?.color?.withOpacity(0.7),
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              Text(
+                'Ubicación: Santa Rita 1153, La Reina, Región Metropolitana.',
+                style: tt.bodySmall?.copyWith(
+                  color: tt.bodySmall?.color?.withOpacity(0.7),
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              Text(
+                'Horario: Martes 2 de diciembre de 12:30 a 14:30.',
+                style: tt.bodySmall?.copyWith(
+                  color: tt.bodySmall?.color?.withOpacity(0.7),
+                ),
+              ),
+
+
+
 
               const SizedBox(height: 5),
               const Divider(),
@@ -156,11 +223,34 @@ class _ActividadScreenState extends State<ActividadScreen> {
         MaterialPageRoute(builder: (context) => const TallerPinturaScreen()),
       );},
                   child: const Text('INSCRIBETE'),
-                  
                 ),
               ),
 
               const SizedBox(height: 16),
+              Container(
+  height: 250, 
+  width: double.infinity,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12),
+    border: Border.all(color: Colors.grey.shade300),
+  ),
+  child: ClipRRect(
+    borderRadius: BorderRadius.circular(12),
+    child: GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: _ubicacionTaller,
+        zoom: 16,
+      ),
+      markers: _markers,
+      onMapCreated: (controller) => _mapController = controller,
+      myLocationButtonEnabled: true,
+      zoomControlsEnabled: true,
+      mapType: MapType.normal,
+    ),
+  ),
+),
+
+const SizedBox(height: 5),
               const Divider(),
               const SizedBox(height: 8),
 
@@ -184,20 +274,21 @@ class _ActividadScreenState extends State<ActividadScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
-        selectedItemColor: cs.primary,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.white,
+        backgroundColor: cs.primary,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Buscar',
+            icon: Icon(Icons.home, color: Colors.white,),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
+            icon: Icon(Icons.calendar_today, color: Colors.white,),
             label: 'Calendario',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
+            icon: Icon(Icons.add, color: Colors.white,),
+            label: 'Crear actividades',
           ),
         ],
       ),

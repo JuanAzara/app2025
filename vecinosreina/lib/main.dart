@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:vecinosreina/screens/actividad.dart';
+//import 'package:vecinosreina/screens/actividad.dart';
 import 'package:vecinosreina/screens/inicio.dart';
 import 'package:vecinosreina/screens/splashscreen.dart';
 import 'package:vecinosreina/theme/theme.dart';
@@ -20,7 +20,6 @@ Future<void> main() async {
       ),
     );
  } on FirebaseException catch (e) {
-    // Si la app ya estaba inicializada, ignora el error
     if (e.code != 'duplicate-app') rethrow;
   }
 

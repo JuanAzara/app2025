@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vecinosreina/screens/actividad.dart';
+import 'package:vecinosreina/screens/inicio.dart';
 
 class crearActividadScreen extends StatefulWidget {
   const crearActividadScreen({super.key});
@@ -17,21 +17,33 @@ class crearActividadScreen extends StatefulWidget {
 class _crearActividadScreenState extends State<crearActividadScreen> {
   File? _pickedImageFile;
   final _picker = ImagePicker();
+  int _currentIndex = 2;
 
   void _onTabTapped(int index) {
-    if (index == 2) {
+     if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const InicioScreen()),
+      );
+    }
+    if (index == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const ActividadScreen()),
       );
     }
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const crearActividadScreen()),
+      );
+    }
   }
 
-  // 1. Seecciona imagen del dispositivo
   void _pickImage() async {
     final pickedImage = await _picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50, // Opcional: optimización de calidad
+      imageQuality: 50, 
       maxWidth: 150,
     );
 
@@ -40,12 +52,11 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
     }
   }
 
-  // 2. Sube la imagen a Firebase Storage y retorna la URL, està em una direcciòn
   Future<String?> _uploadImage(File imageFile) async {
     try {
       final storageRef = FirebaseStorage.instance
           .ref()
-          .child('actividades_img') // Carpeta en Storage
+          .child('actividades_img') 
           .child('${DateTime.now().toIso8601String()}.jpg');
 
       final uploadTask = storageRef.putFile(imageFile);
@@ -63,6 +74,7 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
 
   void _addProduct(BuildContext context) async {
     final titleController = TextEditingController();
+    final categoriaController = TextEditingController();
     final descriptionController = TextEditingController();
     final priceController = TextEditingController();
 
@@ -96,13 +108,11 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                     GestureDetector(
                       onTap: () async {
                         _pickImage();
-                        // Actualizar solo el estado del diàlogo para mostrar la imagen
                         setDialogState(() {});
                       },
                       child: CircleAvatar(
                         radius: 40,
                         backgroundColor: Colors.grey.shade200,
-                        // Muestra la imagen si está seleccionada
                         foregroundImage: _pickedImageFile != null
                             ? FileImage(_pickedImageFile!)
                             : null,
@@ -117,11 +127,19 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Campos de texto...
                     TextField(
                       controller: titleController,
                       decoration: const InputDecoration(
                         labelText: 'Título',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(16),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: categoriaController,
+                      decoration: const InputDecoration(
+                        labelText: 'Categoria',
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.all(16),
                       ),
@@ -167,15 +185,16 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                             final title = titleController.text.trim();
                             final description = descriptionController.text
                                 .trim();
+                            final categoria = categoriaController.text.trim();
                             final price = double.tryParse(
                               priceController.text.trim(),
                             );
 
                             if (title.isNotEmpty &&
                                 description.isNotEmpty &&
+                                categoria.isNotEmpty &&
                                 price != null &&
                                 _pickedImageFile != null) {
-                              // Cerrar el diálogo y mostrar un indicador de carga
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -185,18 +204,17 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                                 ),
                               );
 
-                              // 1. Subir imagen a Storage
                               final imageUrl = await _uploadImage(
                                 _pickedImageFile!,
                               );
 
                               if (imageUrl != null) {
-                                // 2. Guardar actividad con la URL de la imagen
                                 await FirebaseFirestore.instance
                                     .collection('Tus Actividades')
                                     .add({
                                       'Titulo': title,
                                       'Detalle': description,
+                                      'Categoria':categoria,
                                       'Precio': price,
                                       'imageUrl': imageUrl,
                                       'timestamp': FieldValue.serverTimestamp(),
@@ -246,6 +264,7 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
     Map<String, dynamic> data,
   ) async {
     final titleController = TextEditingController(text: data['Titulo']);
+    final categoriaController = TextEditingController(text: data['Categoria']);
     final descriptionController = TextEditingController(
       text: data['Detalle'],
     );
@@ -388,6 +407,7 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -443,7 +463,6 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(16),
 
-                  // Mostrar la imagen
                   leading: imageUrl != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
@@ -452,7 +471,6 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
-                            // Manejo de carga de imagen
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
                               return Center(
@@ -465,7 +483,6 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                                 ),
                               );
                             },
-                            // Manejo de error (ej. si la URL ya n existe)
                             errorBuilder: (context, error, stackTrace) =>
                                 const Icon(
                                   Icons.image_not_supported,
@@ -478,7 +495,7 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                           Icons.shopping_bag,
                           size: 60,
                           color: Colors.grey,
-                        ), // Icono por defecto
+                        ), 
 
                   title: Text(
                     data['Titulo'] ?? '',
@@ -493,7 +510,9 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
                       const SizedBox(height: 4),
                       Text(data['Detalle'] ?? ''),
                       const SizedBox(height: 4),
-                      Text('\$${data['Precio']?.toStringAsFixed(2) ?? '0.00'}'),
+                      Text(data['Categoria'] ?? ''),
+                      const SizedBox(height: 4),
+                      Text('\$${data['Precio']?.toStringAsFixed(2) ?? '0'}'),
                     ],
                   ),
                   trailing: PopupMenuButton<String>(
@@ -525,14 +544,16 @@ class _crearActividadScreenState extends State<crearActividadScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
         onTap: _onTabTapped,
-
+        selectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.white,
+        backgroundColor: cs.primary,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Otros'),
+          BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.white,), label: 'Home',),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Productos',
+            icon: Icon(Icons.calendar_today, color: Colors.white,),
+            label: 'Calendario',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.add, color: Colors.white,), label: 'Crear actividades'),
         ],
       ),
     );
